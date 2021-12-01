@@ -4,4 +4,5 @@ import Test.Hspec.Runner (configFastFail, defaultConfig, hspecWith)
 import Day01 (solution)
 
 main :: IO ()
-main = putStrLn $ show solution
+main = do putStrLn "\n="
+          print solution
