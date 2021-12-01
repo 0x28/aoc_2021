@@ -4,7 +4,7 @@ My solutions for the Advent of Code 2021.
 
 | Day | Solution File | Language |
 |-----+---------------+----------|
-|  01 |               |          |
+|  01 | [[file:haskell/src/Day01.hs][Day01.hs]]      | Haskell  |
 |  02 |               |          |
 |  03 |               |          |
 |  04 |               |          |
