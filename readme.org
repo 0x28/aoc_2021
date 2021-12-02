@@ -5,7 +5,7 @@ My solutions for the Advent of Code 2021.
 | Day | Solution File | Language |
 |-----+---------------+----------|
 |  01 | [[file:haskell/src/Day01.hs][Day01.hs]]      | Haskell  |
-|  02 |               |          |
+|  02 | [[file:haskell/src/Day02.hs][Day02.hs]]      | Haskell  |
 |  03 |               |          |
 |  04 |               |          |
 |  05 |               |          |
