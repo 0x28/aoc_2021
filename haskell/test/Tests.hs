@@ -1,5 +1,6 @@
 import qualified Day01
 import qualified Day02
+import qualified Day03
 import Test.Hspec (Spec, it, shouldBe)
 import Test.Hspec.Runner (configFastFail, defaultConfig, hspecWith)
 import Text.Printf
@@ -23,7 +24,11 @@ main02 = do
   input <- lineInput "./input/input02.txt"
   printf "day02 = %s\n" $ show (Day02.part1 input, Day02.part2 input)
 
+main03 :: IO ()
+main03 = do
+  input <- lineInput "./input/input03.txt"
+  printf "day03 = %s\n" $ show (Day03.part1 input, Day03.part2 input)
+
 main :: IO ()
 main = do
-  main01
-  main02
+  main03
