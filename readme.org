@@ -7,7 +7,7 @@ My solutions for the Advent of Code 2021.
 |  01 | [[file:haskell/src/Day01.hs][Day01.hs]]      | Haskell  |
 |  02 | [[file:haskell/src/Day02.hs][Day02.hs]]      | Haskell  |
 |  03 | [[file:haskell/src/Day03.hs][Day03.hs]]      | Haskell  |
-|  04 |               |          |
+|  04 | [[file:python/src/day04.py][day04.py]]      | Python   |
 |  05 |               |          |
 |  06 |               |          |
 |  07 |               |          |
