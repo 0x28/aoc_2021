@@ -100,7 +100,7 @@ fn main() {
 }
 
 #[test]
-fn test_part1() {
+fn test_day05() {
     let input = "0,9 -> 5,9
 8,0 -> 0,8
 9,4 -> 3,4
