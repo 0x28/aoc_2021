@@ -1,9 +1,5 @@
 use aoc_2021::input_file;
-use std::{
-    cmp::{max, min},
-    collections::HashMap,
-    fs,
-};
+use std::{collections::HashMap, fs};
 
 #[derive(Debug, PartialEq)]
 struct Line {
@@ -19,9 +15,9 @@ fn parse(input: &str) -> Vec<Line> {
         let end = points[1];
 
         let begin: Vec<i32> =
-            begin.split(',').map(|n| n.parse().unwrap()).collect();
+            begin.split(',').flat_map(|n| n.parse()).collect();
         let end: Vec<i32> =
-            end.split(',').map(|n| n.parse().unwrap()).collect();
+            end.split(',').flat_map(|n| n.parse()).collect();
 
         lines.push(Line {
             begin: (begin[0], begin[1]),
@@ -34,44 +30,33 @@ fn parse(input: &str) -> Vec<Line> {
 
 fn line_to_points(line: &Line, diagonal: bool) -> Vec<(i32, i32)> {
     let mut points = vec![];
+    let mut current_point = line.begin;
 
-    if line.begin.0 == line.end.0 {
-        let begin = min(line.begin.1, line.end.1);
-        let end = max(line.begin.1, line.end.1);
-        for y in begin..=end {
-            points.push((line.begin.0, y))
-        }
-    } else if line.begin.1 == line.end.1 {
-        let begin = min(line.begin.0, line.end.0);
-        let end = max(line.begin.0, line.end.0);
-        for x in begin..=end {
-            points.push((x, line.begin.1))
-        }
-    } else if diagonal {
-        let begin_x;
-        let end_x;
-        let begin_y;
-        let end_y;
+    if !diagonal && line.begin.0 != line.end.0 && line.begin.1 != line.end.1 {
+        return points;
+    }
 
-        if line.begin.0 < line.end.0 {
-            begin_x = line.begin.0;
-            begin_y = line.begin.1;
-            end_x = line.end.0;
-            end_y = line.end.1;
-        } else {
-            begin_x = line.end.0;
-            begin_y = line.end.1;
-            end_x = line.begin.0;
-            end_y = line.begin.1;
+    while current_point != line.end {
+        points.push(current_point);
+
+        if current_point.0 < line.end.0 {
+            current_point.0 += 1;
         }
 
-        let step = if begin_y < end_y { 1 } else { -1 };
+        if current_point.0 > line.end.0 {
+            current_point.0 -= 1;
+        }
 
-        for (i, x) in (begin_x..=end_x).enumerate() {
-            let y = (i as i32) * step;
-            points.push((x, begin_y + y))
+        if current_point.1 < line.end.1 {
+            current_point.1 += 1;
+        }
+
+        if current_point.1 > line.end.1 {
+            current_point.1 -= 1;
         }
     }
+
+    points.push(current_point);
 
     points
 }
