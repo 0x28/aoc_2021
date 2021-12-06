@@ -9,7 +9,7 @@ My solutions for the Advent of Code 2021.
 |  03 | [[file:haskell/src/Day03.hs][Day03.hs]]      | Haskell  |
 |  04 | [[file:python/src/day04.py][day04.py]]      | Python   |
 |  05 | [[file:rust/src/bin/day05.rs][day05.rs]]      | Rust     |
-|  06 |               |          |
+|  06 | [[file:rust/src/bin/day06.rs][day06.rs]]      | Rust     |
 |  07 |               |          |
 |  08 |               |          |
 |  09 |               |          |
