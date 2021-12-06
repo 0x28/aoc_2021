@@ -17,7 +17,7 @@ fn increment_population(
     }
 }
 
-fn part1(init: &[u64], iterations: usize) -> u64 {
+fn solution(init: &[u64], iterations: usize) -> u64 {
     let mut population = HashMap::new();
 
     for fish in init {
@@ -49,14 +49,14 @@ fn main() {
     let input = fs::read_to_string(input_file("input06.txt")).unwrap();
     let fish = parse(&input);
 
-    println!("part1 = {}", part1(&fish, 80));
-    println!("part2 = {}", part1(&fish, 256));
+    println!("part1 = {}", solution(&fish, 80));
+    println!("part2 = {}", solution(&fish, 256));
 }
 
 #[test]
 fn test_day06() {
     let input = "3,4,3,1,2";
     let init = parse(input);
-    assert_eq!(part1(&init, 18), 26);
-    assert_eq!(part1(&init, 80), 5934);
+    assert_eq!(solution(&init, 18), 26);
+    assert_eq!(solution(&init, 80), 5934);
 }
