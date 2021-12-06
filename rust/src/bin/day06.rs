@@ -1,48 +1,32 @@
 use aoc_2021::input_file;
-use std::{collections::HashMap, fs};
+use std::fs;
 
-fn parse(input: &str) -> Vec<u64> {
+fn parse(input: &str) -> Vec<usize> {
     input.split(',').flat_map(|s| s.trim().parse()).collect()
 }
 
-fn increment_population(
-    fish: u64,
-    by: u64,
-    population: &mut HashMap<u64, u64>,
-) {
-    if let Some(&value) = population.get(&fish) {
-        population.insert(fish, value + by);
-    } else {
-        population.insert(fish, by);
-    }
-}
+fn solution(init: &[usize], iterations: usize) -> u64 {
+    let mut population = [0; 9];
 
-fn solution(init: &[u64], iterations: usize) -> u64 {
-    let mut population = HashMap::new();
-
-    for fish in init {
-        increment_population(*fish, 1, &mut population);
+    for &fish in init {
+        population[fish] += 1;
     }
     for _ in 0..iterations {
-        let mut new_population = HashMap::new();
-        for (fish, number) in &population {
+        let mut new_population = [0; 9];
+        for (fish, &number) in population.iter().enumerate() {
             match fish {
                 0 => {
-                    increment_population(8, *number, &mut new_population);
-                    increment_population(6, *number, &mut new_population);
+                    new_population[8] += number;
+                    new_population[6] += number;
                 }
-                n => increment_population(
-                    n - 1,
-                    *number,
-                    &mut &mut new_population,
-                ),
+                n => new_population[n-1] += number,
             }
         }
 
         std::mem::swap(&mut new_population, &mut population);
     }
 
-    population.iter().map(|(_, number)| number).sum()
+    population.iter().sum()
 }
 
 fn main() {
