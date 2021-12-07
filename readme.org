@@ -10,7 +10,7 @@ My solutions for the Advent of Code 2021.
 |  04 | [[file:python/src/day04.py][day04.py]]      | Python   |
 |  05 | [[file:rust/src/bin/day05.rs][day05.rs]]      | Rust     |
 |  06 | [[file:rust/src/bin/day06.rs][day06.rs]]      | Rust     |
-|  07 |               |          |
+|  07 | [[file:rust/src/bin/day07.rs][day07.rs]]      | Rust     |
 |  08 |               |          |
 |  09 |               |          |
 |  10 |               |          |
