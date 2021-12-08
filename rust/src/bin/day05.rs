@@ -65,7 +65,7 @@ fn solution(lines: &[Line], diagonal: bool) -> usize {
     let mut field = HashMap::new();
 
     for line in lines {
-        for point in line_to_points(&line, diagonal) {
+        for point in line_to_points(line, diagonal) {
             if let Some(&value) = field.get(&point) {
                 field.insert(point, value + 1);
             } else {
