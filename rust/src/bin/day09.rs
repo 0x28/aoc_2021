@@ -8,8 +8,23 @@ fn parse(input: &str) -> Vec<Vec<u32>> {
         .collect()
 }
 
-fn safe_cell(grid: &[Vec<u32>], x: usize, y: usize) -> Option<&u32> {
-    grid.get(y).map(|r| r.get(x)).flatten()
+fn neighbors(grid: &[Vec<u32>], x: usize, y: usize) -> Vec<(usize, usize)> {
+    [
+        (x, y + 1),
+        (x + 1, y),
+        (x.wrapping_sub(1), y),
+        (x, y.wrapping_sub(1)),
+    ]
+    .iter()
+    .filter(|(x, y)| {
+        if let Some(row) = grid.get(*y) {
+            row.get(*x).is_some()
+        } else {
+            false
+        }
+    })
+    .copied()
+    .collect()
 }
 
 fn part1(grid: &[Vec<u32>]) -> (i64, Vec<(usize, usize)>) {
@@ -17,29 +32,13 @@ fn part1(grid: &[Vec<u32>]) -> (i64, Vec<(usize, usize)>) {
     let mut low_points = vec![];
     for (y, row) in grid.iter().enumerate() {
         for (x, cell) in row.iter().enumerate() {
-            if let Some(top) = safe_cell(grid, x, y.wrapping_sub(1)) {
-                if top <= cell {
-                    continue;
-                }
+            if neighbors(grid, x, y)
+                .iter()
+                .all(|(x, y)| grid[*y][*x] > *cell)
+            {
+                lows.push(cell);
+                low_points.push((x, y));
             }
-            if let Some(left) = safe_cell(grid, x.wrapping_sub(1), y) {
-                if left <= cell {
-                    continue;
-                }
-            }
-            if let Some(right) = safe_cell(grid, x + 1, y) {
-                if right <= cell {
-                    continue;
-                }
-            }
-            if let Some(bottom) = safe_cell(grid, x, y + 1) {
-                if bottom <= cell {
-                    continue;
-                }
-            }
-
-            lows.push(cell);
-            low_points.push((x, y));
         }
     }
 
@@ -58,24 +57,13 @@ fn part2(grid: &[Vec<u32>], low_points: &[(usize, usize)]) -> usize {
         while old_size != seen.len() {
             old_size = seen.len();
             for (x, y) in seen.clone() {
-                if let Some(top) = safe_cell(grid, x, y.wrapping_sub(1)) {
-                    if top > &grid[y][x] && *top != 9 {
-                        seen.insert((x, y - 1));
+                for pos @ (n_x, n_y) in neighbors(grid, x, y) {
+                    if seen.contains(&pos) {
+                        continue;
                     }
-                }
-                if let Some(left) = safe_cell(grid, x.wrapping_sub(1), y) {
-                    if left > &grid[y][x] && *left != 9 {
-                        seen.insert((x - 1, y));
-                    }
-                }
-                if let Some(right) = safe_cell(grid, x + 1, y) {
-                    if right > &grid[y][x] && *right != 9 {
-                        seen.insert((x + 1, y));
-                    }
-                }
-                if let Some(bottom) = safe_cell(grid, x, y + 1) {
-                    if bottom > &grid[y][x] && *bottom != 9 {
-                        seen.insert((x, y + 1));
+                    let neighbor = grid[n_y][n_x];
+                    if grid[y][x] < neighbor && neighbor < 9 {
+                        seen.insert((n_x, n_y));
                     }
                 }
             }
