@@ -14,7 +14,7 @@ My solutions for the Advent of Code 2021.
 |  08 | [[file:rust/src/bin/day08.rs][day08.rs]]      | Rust     |
 |  09 | [[file:rust/src/bin/day09.rs][day09.rs]]      | Rust     |
 |  10 | [[file:rust/src/bin/day10.rs][day10.rs]]      | Rust     |
-|  11 |               |          |
+|  11 | [[file:rust/src/bin/day11.rs][day11.rs]]      | Rust     |
 |  12 |               |          |
 |  13 |               |          |
 |  14 |               |          |
