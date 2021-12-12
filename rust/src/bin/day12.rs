@@ -66,13 +66,11 @@ fn walk2(
     edges: &HashMap<String, Vec<String>>,
     visited: &mut Vec<String>,
     ignore_double: bool,
-    path: &str,
-) -> Vec<String> {
+) -> usize {
     if current == "end" {
-        return vec![path.to_string()];
+        return 1;
     }
-    let mut paths = vec![];
-    let new_path = format!("{}.{}", path, current);
+    let mut sum = 0;
 
     for node in edges.get(current).unwrap() {
         let mut ignore = ignore_double;
@@ -86,27 +84,20 @@ fn walk2(
 
         if node.chars().all(char::is_lowercase) {
             visited.push(node.to_string());
-            paths.extend(
-                walk2(node, edges, visited, ignore, &new_path).into_iter(),
-            );
+            sum += walk2(node, edges, visited, ignore);
             visited.pop();
         } else {
-            paths.extend(
-                walk2(node, edges, visited, ignore, &new_path).into_iter(),
-            );
+            sum += walk2(node, edges, visited, ignore);
         }
     }
 
-    paths
+    sum
 }
 
 fn part2(edges: &HashMap<String, Vec<String>>) -> usize {
     let mut visited = vec!["start".to_string()];
 
-    HashSet::<String>::from_iter(
-        walk2("start", edges, &mut visited, true, "").into_iter(),
-    )
-    .len()
+    walk2("start", edges, &mut visited, true)
 }
 
 fn main() {
