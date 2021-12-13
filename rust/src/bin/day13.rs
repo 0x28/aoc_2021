@@ -115,9 +115,9 @@ fn display_points(points: &HashSet<(i32, i32)>) {
     for y in 0..=max_y {
         for x in 0..=max_x {
             if points.contains(&(x, y)) {
-                print!("#");
+                print!("▇");
             } else {
-                print!(".");
+                print!(" ");
             }
         }
         println!();
