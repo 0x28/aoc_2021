@@ -38,6 +38,11 @@ fn solve(
 ) -> i64 {
     let mut pairs = HashMap::new();
     let initial = Vec::from_iter(initial.chars());
+    let mut letter_count = HashMap::new();
+
+    for letter in &initial {
+        inc_in_map(&mut letter_count, letter, 1);
+    }
 
     for window in initial.windows(2) {
         let window = String::from_iter(window);
@@ -49,38 +54,21 @@ fn solve(
 
         for (pair, &count) in &pairs {
             let transition = transitions.get(pair.as_str()).unwrap();
+            let mut chars = pair.chars();
 
-            let pair1 =
-                String::from_iter([pair.chars().next().unwrap(), *transition]);
-            let pair2 =
-                String::from_iter([*transition, pair.chars().nth(1).unwrap()]);
+            let pair1 = String::from_iter([chars.next().unwrap(), *transition]);
+            let pair2 = String::from_iter([*transition, chars.next().unwrap()]);
 
             inc_in_map(&mut new_pairs, &pair1, count);
             inc_in_map(&mut new_pairs, &pair2, count);
+            inc_in_map(&mut letter_count, transition, count);
         }
 
         std::mem::swap(&mut new_pairs, &mut pairs);
     }
 
-    let mut letter_count = HashMap::new();
-
-    letter_count.insert(*initial.last().unwrap(), 1);
-
-    for (pair, &count) in &pairs {
-        let letter = pair.chars().next().unwrap();
-        inc_in_map(&mut letter_count, &letter, count);
-    }
-
-    let max = letter_count
-        .iter()
-        .max_by(|(_, v1), (_, v2)| v1.cmp(v2))
-        .unwrap()
-        .1;
-    let min = letter_count
-        .iter()
-        .min_by(|(_, v1), (_, v2)| v1.cmp(v2))
-        .unwrap()
-        .1;
+    let max = letter_count.values().max().unwrap();
+    let min = letter_count.values().min().unwrap();
 
     max - min
 }
