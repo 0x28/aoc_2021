@@ -26,23 +26,15 @@ impl Packet {
     }
 }
 
-fn one_zero(num: u8) -> u8 {
-    if num > 0 {
-        1
-    } else {
-        0
-    }
-}
-
 fn parse(input: &str) -> Packet {
     let mut bits = vec![];
     for hex in input.chars() {
         let hex = u8::from_str_radix(&hex.to_string(), 16).unwrap();
         bits.extend_from_slice(&[
-            one_zero(hex & 0x8),
-            one_zero(hex & 0x4),
-            one_zero(hex & 0x2),
-            one_zero(hex & 0x1),
+            (hex & 0x8 > 0) as u8,
+            (hex & 0x4 > 0) as u8,
+            (hex & 0x2 > 0) as u8,
+            (hex & 0x1 > 0) as u8,
         ]);
     }
 
@@ -140,27 +132,9 @@ fn part2(packet: &Packet) -> usize {
             5 | 6 | 7 => {
                 if let [first, second] = &sub[..] {
                     match part2(first).cmp(&part2(second)) {
-                        Ordering::Less => {
-                            if packet.type_id == 6 {
-                                1
-                            } else {
-                                0
-                            }
-                        }
-                        Ordering::Equal => {
-                            if packet.type_id == 7 {
-                                1
-                            } else {
-                                0
-                            }
-                        }
-                        Ordering::Greater => {
-                            if packet.type_id == 5 {
-                                1
-                            } else {
-                                0
-                            }
-                        }
+                        Ordering::Less => (packet.type_id == 6) as usize,
+                        Ordering::Equal => (packet.type_id == 7) as usize,
+                        Ordering::Greater => (packet.type_id == 5) as usize,
                     }
                 } else {
                     unreachable!()
