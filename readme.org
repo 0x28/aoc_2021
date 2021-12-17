@@ -20,7 +20,7 @@ My solutions for the Advent of Code 2021.
 |  14 | [[file:rust/src/bin/day14.rs][day14.rs]]      | Rust     |
 |  15 | [[file:rust/src/bin/day15.rs][day15.rs]]      | Rust     |
 |  16 | [[file:rust/src/bin/day16.rs][day16.rs]]      | Rust     |
-|  17 |               |          |
+|  17 | [[file:rust/src/bin/day17.rs][day17.rs]]      | Rust     |
 |  18 |               |          |
 |  19 |               |          |
 |  20 |               |          |
