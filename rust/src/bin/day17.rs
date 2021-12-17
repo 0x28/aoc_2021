@@ -54,8 +54,8 @@ fn part1(area: &Area) -> i64 {
 fn part2(area: &Area) -> i64 {
     let min_vx = 1;
     let max_vx = area.x2;
-    let min_vy = area.y1;
-    let max_vy = part1(area);
+    let min_vy = std::cmp::min(area.y1, -area.y1);
+    let max_vy = std::cmp::max(area.y1, -area.y1);
     let mut count = 0;
 
     for vx in min_vx..=max_vx {
