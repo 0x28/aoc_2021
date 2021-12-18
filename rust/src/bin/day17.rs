@@ -86,7 +86,7 @@ fn main() {
 }
 
 #[test]
-fn test_day() {
+fn test_day17() {
     let input = "target area: x=20..30, y=-10..-5";
     let input = parse(input);
 
