@@ -1,10 +1,12 @@
 use aoc_2021::input_file;
-use std::{
-    collections::{HashMap, HashSet},
-    fs,
-};
+use std::fs;
+
+use rustc_hash::FxHashMap;
+use rustc_hash::FxHashSet;
 
 type Pos = (i64, i64, i64);
+type PositionMapping = FxHashSet<(Pos, Pos)>;
+type DiffCache = FxHashMap<Vec<Pos>, FxHashMap<Pos, Pos>>;
 
 fn parse(input: &str) -> Vec<Vec<Pos>> {
     let mut scanner = vec![];
@@ -28,8 +30,11 @@ fn sub_pos(pos1: &Pos, pos2: &Pos) -> Pos {
     (pos1.0 - pos2.0, pos1.1 - pos2.1, pos1.2 - pos2.2)
 }
 
-fn diffs(scanner: &[Pos]) -> HashMap<Pos, Pos> {
-    let mut diffs = HashMap::new();
+fn diffs(diff_cache: &mut DiffCache, scanner: &[Pos]) {
+    if diff_cache.contains_key(scanner) {
+        return;
+    }
+    let mut diffs = FxHashMap::default();
 
     for &b_left in scanner {
         for &b_right in scanner {
@@ -39,17 +44,23 @@ fn diffs(scanner: &[Pos]) -> HashMap<Pos, Pos> {
         }
     }
 
-    diffs
+    diff_cache.insert(scanner.to_vec(), diffs);
 }
 
-fn common_beacons(scanner1: &[Pos], scanner2: &[Pos]) -> HashSet<(Pos, Pos)> {
-    let diffs1 = diffs(scanner1);
-    let diffs2 = diffs(scanner2);
-    let mut common = HashSet::new();
+fn common_beacons(
+    diff_cache: &mut DiffCache,
+    scanner1: &[Pos],
+    scanner2: &[Pos],
+) -> PositionMapping {
+    diffs(diff_cache, scanner1);
+    diffs(diff_cache, scanner2);
+    let mut common = FxHashSet::default();
+    let diff1 = diff_cache.get(scanner1).unwrap();
+    let diff2 = diff_cache.get(scanner2).unwrap();
 
-    for (diff, pos1) in diffs1 {
-        if let Some(pos2) = diffs2.get(&diff) {
-            common.insert((pos1, *pos2));
+    for (diff, pos1) in diff1 {
+        if let Some(pos2) = diff2.get(diff) {
+            common.insert((*pos1, *pos2));
         }
     }
 
@@ -61,7 +72,7 @@ fn orientations(scanner: &[Pos]) -> Vec<Vec<Pos>> {
     let rotate_left_y = |&(x, y, z): &Pos| (-z, y, x);
     let rotate_left_z = |&(x, y, z): &Pos| (-y, x, z);
 
-    let mut orientations = HashSet::<Vec<Pos>>::from_iter([scanner.to_vec()]);
+    let mut orientations = FxHashSet::<Vec<Pos>>::from_iter([scanner.to_vec()]);
     let mut old_size = 1;
 
     loop {
@@ -87,14 +98,13 @@ fn orientations(scanner: &[Pos]) -> Vec<Vec<Pos>> {
     orientations.into_iter().collect()
 }
 
-type PositionMapping = HashSet<(Pos, Pos)>;
-
 fn common_beacons_with_rotation(
+    diff_cache: &mut DiffCache,
     fixed_scanner: &[Pos],
     scanner: &[Pos],
 ) -> Option<(Vec<Pos>, PositionMapping)> {
     for o in orientations(scanner) {
-        let common = common_beacons(fixed_scanner, &o);
+        let common = common_beacons(diff_cache, fixed_scanner, &o);
         if common.len() >= 12 {
             return Some((o, common));
         }
@@ -111,31 +121,30 @@ fn manhatten_distance(p1: &Pos, p2: &Pos) -> i64 {
 
 fn solve(puzzle: &[Vec<Pos>]) -> (usize, i64) {
     let mut fixed_scanners =
-        HashSet::<Vec<Pos>>::from_iter([puzzle.first().unwrap().clone()]);
-    let mut scanners = HashSet::<Vec<Pos>>::from_iter(
+        FxHashSet::<Vec<Pos>>::from_iter([puzzle.first().unwrap().clone()]);
+    let mut scanners = FxHashSet::<Vec<Pos>>::from_iter(
         puzzle.iter().skip(1).cloned().collect::<Vec<_>>(),
     );
-    let mut scanner_positions = vec![];
+    let mut scanner_positions = vec![(0, 0, 0)];
+    let mut diff_cache = DiffCache::default();
 
     while !scanners.is_empty() {
         let mut remove_scanner = None;
         let mut new_fixed_scanner = None;
         for scanner in &scanners {
             for fixed_scanner in &fixed_scanners {
-                if let Some((o, beacons)) =
-                    common_beacons_with_rotation(fixed_scanner, scanner)
-                {
-                    if beacons.len() >= 12 {
-                        let (fixed_pos, new_pos) =
-                            beacons.iter().next().unwrap();
-                        let delta = sub_pos(new_pos, fixed_pos);
-                        scanner_positions.push(delta);
-                        remove_scanner = Some(scanner.clone());
-                        new_fixed_scanner = Some(
-                            o.iter().map(|b| sub_pos(b, &delta)).collect(),
-                        );
-                        break;
-                    }
+                if let Some((o, beacons)) = common_beacons_with_rotation(
+                    &mut diff_cache,
+                    fixed_scanner,
+                    scanner,
+                ) {
+                    let (fixed_pos, new_pos) = beacons.iter().next().unwrap();
+                    let delta = sub_pos(new_pos, fixed_pos);
+                    scanner_positions.push(delta);
+                    remove_scanner = Some(scanner.clone());
+                    new_fixed_scanner =
+                        Some(o.iter().map(|b| sub_pos(b, &delta)).collect());
+                    break;
                 }
             }
         }
@@ -149,7 +158,7 @@ fn solve(puzzle: &[Vec<Pos>]) -> (usize, i64) {
         }
     }
 
-    let mut beacons = HashSet::<Pos>::new();
+    let mut beacons = FxHashSet::<Pos>::default();
 
     for s in fixed_scanners {
         beacons.extend(s.iter());
